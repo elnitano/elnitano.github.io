@@ -9,10 +9,11 @@ class HTMLNode():
         raise NotImplemented
     
     def props_to_method(self):
+        if self.props is None:
+            return ""
         properties = ""
-        if self.props:
-            for property in self.props:
-                properties += f' {property}="{self.props[property]}"'
+        for property in self.props:
+            properties += f' {property}="{self.props[property]}"'
         return properties
     
     def __repr__(self):
@@ -24,10 +25,14 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if self.value is None:
+            print(self.__repr__)
             raise ValueError("All leaf nodes must have a value")
         if self.tag is None:
             return self.value
         return f"<{self.tag}{self.props_to_method()}>{self.value}</{self.tag}>"
+    
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
     
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
@@ -42,4 +47,7 @@ class ParentNode(HTMLNode):
         for leafs in self.children:
             childs += leafs.to_html()
         return f"<{self.tag}{self.props_to_method()}>{childs}</{self.tag}>"
+    
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
         
